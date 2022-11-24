@@ -1,6 +1,5 @@
 package it.fcg.exercise.controller;
 
-import com.sun.istack.NotNull;
 import it.fcg.exercise.entity.User;
 import it.fcg.exercise.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,78 +15,64 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity postUser(@RequestBody User user){
+    public ResponseEntity postUser(@RequestBody User user) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(userService.create(user));
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    @GetMapping("/read{name}/{surname}")
-    public ResponseEntity getUsers(@PathVariable(required = false) String name, @PathVariable(required = false) String surname){
-        try {
-            if(!name.isEmpty()||!name.isBlank()&&!surname.isEmpty()||!surname.isBlank()){
-                return ResponseEntity.status(HttpStatus.OK).body(userService.readSingle(name,surname));
-            } else if (!name.isEmpty()||!name.isBlank()&&surname.isEmpty()||surname.isBlank()) {
-                return ResponseEntity.status(HttpStatus.OK).body(userService.readSingle(name));
-            } else if (name.isEmpty()||name.isBlank()&&!surname.isEmpty()||!surname.isBlank()) {
-                return ResponseEntity.status(HttpStatus.OK).body(userService.readSingle(surname));
-            }else{
-                return ResponseEntity.status(HttpStatus.OK).body(userService.readAll());
-            }
 
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-    /*
-    @GetMapping("/read/{name}")
-    public ResponseEntity getUser(@PathVariable(required = false) String name){
+    @GetMapping("/read")
+    public ResponseEntity getUser() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.readSingle(name));
-        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.OK).body(userService.readAll());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    @GetMapping("/read/{surname}")
-    public ResponseEntity getUser(@PathVariable(required = false) String surname){
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.readSingle(surname));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-    @GetMapping("/read/{name}-{surname}")
-    public ResponseEntity getUser(@PathVariable(required = false) String name,@PathVariable(required = false) String surname){
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.readSingle(name,surname));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-     */
 
-    //controllare nel caso aggiungere id
     @PutMapping("/update")
-    public ResponseEntity putUser(@RequestBody @NotNull User user){
+    public ResponseEntity putUser(@RequestParam Long id, @RequestBody User user) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.update(user));
-        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.OK).body(userService.update(id, user));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    @DeleteMapping("/delete{id}")
-    public ResponseEntity delete(@PathVariable(required = false) Long id) {
-        try {
-            if (id != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(userService.deleteById(id));
-            } else {
-                return ResponseEntity.status(HttpStatus.OK).body(userService.deleteAll());
-            }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable Long id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.deleteById(id));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity delete() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.deleteAll());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity searchByNameAndSurname(@RequestParam(required = false) String name, @RequestParam(required = false) String surname) {
+        try {
+            if (name == null && surname == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(userService.readAll());
+            } else if (surname == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(userService.readByName(name));
+            } else if (name == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(userService.readSingle(surname));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(userService.readSingle(name, surname));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
