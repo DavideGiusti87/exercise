@@ -1,29 +1,32 @@
 package it.fcg.exercise.entity;
 
-import com.opencsv.bean.CsvBindByName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
-    @CsvBindByName
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @CsvBindByName
+
     private String name;
-    @CsvBindByName
+
     private String surname;
-    @CsvBindByName
+
     @Column(unique = true, nullable = false)
     private String email;
-    @CsvBindByName
+
     private String city;
-    @CsvBindByName
+
     private String address;
-    @CsvBindByName
+
     private String zipCode;
 }
