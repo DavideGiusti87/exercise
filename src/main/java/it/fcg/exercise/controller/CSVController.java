@@ -3,17 +3,16 @@ package it.fcg.exercise.controller;
 import it.fcg.exercise.entity.User;
 import it.fcg.exercise.service.CSVService;
 import it.fcg.exercise.utils.CSVHelper;
-import it.fcg.exercise.utils.ResponseMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
-@CrossOrigin("http://localhost:8080")
+
 @RestController
 @RequestMapping("/api/csv")
 public class CSVController {
@@ -21,38 +20,19 @@ public class CSVController {
     CSVService service;
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
-        String message = "";
+    public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) {
 
         if (CSVHelper.hasCSVFormat(file)) {
             try {
                 service.save(file);
 
-                message = "Uploaded the file successfully: " + file.getOriginalFilename();
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+                return ResponseEntity.status(HttpStatus.OK).body(String.format("Uploaded the file successfully: %s",file.getOriginalFilename()));
             } catch (Exception e) {
-                message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+
+                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(String.format("Could not upload the file: %s!",file.getOriginalFilename()));
             }
         }
 
-        message = "Please upload a csv file!";
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload a csv file!");
     }
-/*
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        try {
-            List<User> userList = service.getAllUsers();
-
-            if (userList.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-
-            return new ResponseEntity<>(userList, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
- */
 }

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class CSVHelper {
     public static final String TYPE = "text/csv";
-    static String[] HEADERs = { "id", "name", "surname", "email", "city", "address", "zip_code" };
+    static final String[] HEADERs = { "id", "name", "surname", "email", "city", "address", "zip_code" };
 
     //controlla se un file ha il formato CSV o meno
     public static boolean hasCSVFormat(MultipartFile file) {
